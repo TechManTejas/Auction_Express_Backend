@@ -1,9 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IAuction extends Document {
-  winner_id: string; // Assuming winner_id is a reference to user_id
+  winner_id: mongoose.Types.ObjectId | null; // Assuming winner_id is a reference to user_id
   winner_bid_amount: number;
-  title: string[];
+  title: string;
   description: string;
   images: [string]; // You might want to use a specific data type for images, like Buffer or a URL
   start_datetime: Date;
