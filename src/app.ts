@@ -3,11 +3,18 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import mongoose from './db';
+import cors from 'cors';
 import userRoutes from './routes/userRoutes';
 import auctionRoutes from './routes/auctionRoutes';
 import auctionSockets from './sockets/auctionSocket';
 
 const app = express();
+
+// Use the cors middleware to enable CORS and allow all origins
+app.use(cors({
+  origin: 'http://localhost:5173',
+}));
+
 app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
