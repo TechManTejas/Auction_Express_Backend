@@ -1,9 +1,12 @@
 import 'dotenv/config';
 import express from 'express';
 import http from 'http';
-import { Server } from 'socket.io';
 import mongoose from './db';
 import cors from 'cors';
+import fs from 'fs';
+import { Server } from 'socket.io';
+
+
 import userRoutes from './routes/userRoutes';
 import auctionRoutes from './routes/auctionRoutes';
 import auctionSockets from './sockets/auctionSocket';
@@ -12,7 +15,7 @@ const app = express();
 
 // Use the cors middleware to enable CORS and allow all origins
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: '*',
 }));
 
 app.use(express.json());
@@ -36,6 +39,21 @@ auctionSockets(io);
 
 app.use('/users', userRoutes);
 app.use('/auctions', auctionRoutes);
+
+app.get('/.well-known/pki-validation/44ACDDD30968E49728910DA7A6DDB8AD.txt', (req, res) => {
+  // Assuming your text file is named 'example.txt' in the root directory
+  const filePath = '39DDA8E16A8150424FC88AD44C09AED0.txt';
+
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+    } else {
+      res.send(data);
+    }
+  });
+});
+
 
 // Start the server
 server.listen(PORT, () => {
