@@ -1,11 +1,10 @@
 import 'dotenv/config';
 import express from 'express';
-import http from 'http';
 import mongoose from './db';
 import cors from 'cors';
 import fs from 'fs';
+import https from "https"
 import { Server } from 'socket.io';
-
 
 import userRoutes from './routes/userRoutes';
 import auctionRoutes from './routes/auctionRoutes';
@@ -23,14 +22,20 @@ const PORT = process.env.PORT || 5000;
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
+// Specify the paths to your SSL certificate and private key
+const privateKey = fs.readFileSync('private.key', 'utf8');
+const certificate = fs.readFileSync('certificate.crt', 'utf8');
+const ca = fs.readFileSync('ca_bundle.crt', 'utf8');
 
-// Create HTTP server
-const server = http.createServer(app);
+const credentials = { key: privateKey, cert: certificate, ca: ca };
+
+// Create an HTTPS server
+const httpsServer = https.createServer(credentials, app);
 
 // Initialize Socket.IO
-const io = new Server(server, {
+const io = new Server(httpsServer, {
   cors: {
-    origin: 'http://localhost:3000',  // Replace with your frontend URL
+    origin: '*',  // Replace with your frontend URL
   },
 });
 
@@ -56,6 +61,6 @@ app.get('/.well-known/pki-validation/44ACDDD30968E49728910DA7A6DDB8AD.txt', (req
 
 
 // Start the server
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+httpsServer.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT} with SSL`);
 });
