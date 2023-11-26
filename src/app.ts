@@ -47,7 +47,7 @@ app.use('/auctions', auctionRoutes);
 
 app.get('/.well-known/pki-validation/44ACDDD30968E49728910DA7A6DDB8AD.txt', (req, res) => {
   // Assuming your text file is named 'example.txt' in the root directory
-  const filePath = '39DDA8E16A8150424FC88AD44C09AED0.txt';
+  const filePath = '44ACDDD30968E49728910DA7A6DDB8AD.txt';
 
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
