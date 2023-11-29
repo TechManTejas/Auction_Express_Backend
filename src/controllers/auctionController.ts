@@ -71,34 +71,34 @@ export const deleteAuctionById = async (req: Request, res: Response) => {
 
 // Get a simplified view of all auctions
 export const getAllSimplifiedAuctions = async (_: Request, res: Response) => {
-    try {
-      const auctions = await AuctionModel.find({}, {
-        title: 1,
-        description: 1,
-        images: { $slice: 1 }, // Get only the first image
-        opening_bid_amount: 1,
-        start_datetime: 1,
-        duration: 1,
-      });
-  
-      res.status(200).json(auctions);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  };
+  try {
+    const auctions = await AuctionModel.find({}, {
+      title: 1,
+      description: 1,
+      images: { $slice: 1 }, // Get only the first image
+      opening_bid_amount: 1,
+      start_datetime: 1,
+      duration: 1,
+    });
+
+    res.status(200).json(auctions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 // Get all details of a specific auction (including logs)
 export const getFullAuctionDetailsById = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    try {
-      const auction = await AuctionModel.findById(id);
-      if (!auction) {
-        return res.status(404).json({ message: 'Auction not found' });
-      }
-      res.status(200).json(auction);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal Server Error' });
+  const { id } = req.params;
+  try {
+    const auction = await AuctionModel.findById(id);
+    if (!auction) {
+      return res.status(404).json({ message: 'Auction not found' });
     }
-  };
+    res.status(200).json(auction);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};

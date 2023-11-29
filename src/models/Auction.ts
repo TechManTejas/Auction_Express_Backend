@@ -5,9 +5,11 @@ export interface IAuction extends Document {
   winner_bid_amount: number;
   title: string;
   description: string;
-  images: [string]; // You might want to use a specific data type for images, like Buffer or a URL
+  image: string; // You might want to use a specific data type for images, like Buffer or a URL
   start_datetime: Date;
-  duration: number; // Duration in minutes, for example
+  duration: number; 
+  durationHours: number;
+  durationMinutes: number;
   opening_bid_amount: number;
   logs: Record<string, any>[]; // JSON structure for logs
   raise_options: Record<string, any>; // JSON structure for raise_options
@@ -19,9 +21,11 @@ const AuctionSchema: Schema = new Schema({
   winner_bid_amount: { type: Number, default: 0 },
   title: { type: String, required: true },
   description: { type: String, required: true },
-  images: { type: [String], required: true },
+  image: { type: String, required: true },
   start_datetime: { type: Date, required: true },
   duration: { type: Number, required: true },
+  durationHours: { type: Number, required: true },
+  durationMinutes: { type: Number, required: true },
   opening_bid_amount: { type: Number, required: true },
   logs: { type: [Object], default: [] },
   raise_options: { type: Object, default: {} },

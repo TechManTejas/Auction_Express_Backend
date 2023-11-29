@@ -1,4 +1,6 @@
+import { io } from '../app';
 import AuctionModel, { IAuction } from '../models/Auction';
+import { startAuctionTimer } from './auctionSocket';
 
 // Define a dictionary to store auction information
 const auctionsData: Record<string, IAuction> = {};
@@ -14,7 +16,6 @@ const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
             try {
                 // Convert the plain object to a Mongoose document
                 const auctionDocument = new AuctionModel(auction);
-                await auctionDocument.save(); // Save the document if needed
 
                 // Update the status in MongoDB
                 await AuctionModel.updateOne({ _id: auction._id }, { $set: { status: 'In Progress' } });
@@ -23,10 +24,15 @@ const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
                 auctionsData[auctionId] = auctionDocument.toObject();
 
                 // Update the status in memory
-                auction.status = 'In Progress';
+                auctionsData[auctionId].status = 'In Progress';
 
                 // Additional logic if needed when an auction starts
                 console.log(`Auction ${auctionId} has started.`);
+
+                // If it's a new auction, start the timer
+                startAuctionTimer(io, auctionId, auction.start_datetime, auction.duration);
+                
+
             } catch (error: any) {
                 console.error('Error converting to Mongoose document:', error.message);
             }
@@ -38,12 +44,16 @@ const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
 const checkAndEndAuctions = async () => {
     const now = new Date();
 
+    console.log("Auctions", auctionsData)
+
     for (const auctionId in auctionsData) {
         const auction = auctionsData[auctionId];
 
         if (auction && auction.status === 'In Progress') {
-            const auctionEndTime = new Date(auction.start_datetime);
-            auctionEndTime.setMinutes(auctionEndTime.getMinutes() + auction.duration);
+            const auctionStartTime = new Date(auction.start_datetime).getTime();
+            const auctionEndTime = new Date(auctionStartTime + auction.duration);
+
+            console.log("Now: ", now, "Auction End Time:", auctionEndTime);
 
             if (now >= auctionEndTime) {
                 try {
@@ -53,11 +63,10 @@ const checkAndEndAuctions = async () => {
                     // Update the entire auction information in MongoDB
                     await AuctionModel.updateOne({ _id: auction._id }, { $set: { ...auction } });
 
-                    // Additional logic if needed when an auction ends
-                    // ...
-
                     // Remove the auction from memory if needed
                     delete auctionsData[auctionId];
+                    console.log(`Auction ${auctionId} has ended.`);
+
                 } catch (error: any) {
                     console.error('Error updating auction in MongoDB:', error.message);
                 }
@@ -71,6 +80,7 @@ const getNotStartedAuctions = async (): Promise<Record<string, IAuction>> => {
     try {
         // Fetch 'Not Started' auctions from the database using your Mongoose model
         const auctions = await AuctionModel.find({ status: 'Not Started' }).lean().exec();
+        console.log("Not started auctions", auctions)
 
         // Convert the array of documents to a Record with auctionId as the key
         const auctionsById: Record<string, IAuction> = auctions.reduce((acc: any, auction) => {
@@ -78,6 +88,7 @@ const getNotStartedAuctions = async (): Promise<Record<string, IAuction>> => {
             acc[auction._id!.toString()] = auction;
             return acc;
         }, {});
+        console.log("Auctions by Id", auctionsById)
 
         return auctionsById;
     } catch (error: any) {
@@ -92,7 +103,7 @@ const checkAuctionsInterval = setInterval(async () => {
     const allAuctions = await getNotStartedAuctions();
     checkAndMoveAuctions(allAuctions);
     checkAndEndAuctions();
-}, 60000); // 60000 milliseconds = 1 minute
+}, 60000 / 20); // 60000 milliseconds = 1 minute
 
 // Uncomment the line below if you want to stop the interval when needed (e.g., when the server is shutting down)
 // clearInterval(checkAuctionsInterval);

@@ -1,39 +1,27 @@
 import { Server, Socket } from 'socket.io';
 import auctionsData from './auctionManager';
 
-const auctionSockets = (io: Server) => {
-    // Function to start the auction timers for all auctions
-    function startAllAuctionTimers() {
-        // Iterate through all auctions in auctionsData
-        for (const auctionId in auctionsData) {
-            const auction = auctionsData[auctionId];
+export function startAuctionTimer(io: Server, auctionId: string, startDatetime: Date, duration: number) {
+    // Calculate the auction end time
+    const auctionEndTime = new Date(startDatetime).getTime() + duration; // Convert duration to milliseconds
 
-            // Start the timer for the current auction
-            startAuctionTimer(io, auctionId, auction.start_datetime, auction.duration);
+    // Update clients with time remaining
+    const intervalId = setInterval(() => {
+        const timeRemaining = Math.max(0, auctionEndTime - Date.now());
+        console.log("Time remaining for", auctionId, " is ", timeRemaining)
+        io.to(auctionId).emit('updateTime', { timeRemaining });
+
+        // If the time is up, end the auction and clear the interval
+        if (timeRemaining === 0) {
+            io.to(auctionId).emit('auctionEnd');
+            clearInterval(intervalId);
         }
-    }
+    }, 1000);
+}
 
+
+const auctionSockets = (io: Server) => {
     // Function to start the auction timer for a specific auction
-    function startAuctionTimer(io: Server, auctionId: string, startDatetime: Date, duration: number) {
-        // Calculate the auction end time
-        const auctionEndTime = new Date(startDatetime).getTime() + duration * 60 * 1000; // Convert duration to milliseconds
-
-        // Update clients with time remaining
-        const intervalId = setInterval(() => {
-            const timeRemaining = Math.max(0, auctionEndTime - Date.now());
-            io.to(auctionId).emit('updateTime', { timeRemaining });
-
-            // If the time is up, end the auction and clear the interval
-            if (timeRemaining === 0) {
-                io.to(auctionId).emit('auctionEnd');
-                clearInterval(intervalId);
-            }
-        }, 1000);
-    }
-
-    // Call the function to start timers for all auctions
-    startAllAuctionTimers();
-
     io.on('connection', (socket: Socket) => {
         console.log(`User connected: ${socket.id}`);
 

@@ -1,8 +1,8 @@
 import express, { Router, Request, Response } from 'express';
-import mongoose, { Document, Model } from 'mongoose';
+import { Document, Model, Query } from 'mongoose';
 
 // Generic function to generate CRUD routes for a model
-export const generateCRUDRoutes = <T extends Document>(model: Model<T>): Router => {
+export const generateCRUDRoutes = <T extends Document>(model: Model<T>, population?: string | string[]): Router => {
   const router = express.Router();
 
   // Create
@@ -10,7 +10,7 @@ export const generateCRUDRoutes = <T extends Document>(model: Model<T>): Router 
     try {
       const newItem = new model(req.body);
       await newItem.save();
-      res.status(201).json({ message: `${model.modelName} created successfully` });
+      res.status(201).json(newItem);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Internal Server Error' });
@@ -29,15 +29,47 @@ export const generateCRUDRoutes = <T extends Document>(model: Model<T>): Router 
       const filterQuery = req.query.filter;
       const filter = filterQuery ? { yourPropertyName: filterQuery } : {};
 
-      // Combine search and filter queries
-      const query = { ...filter };
+      // Search
+      const searchQuery = req.query.search as string;
+      const searchFilter: Record<string, any> = {};
 
-      const items = await model
-        .find(query)
+      if (searchQuery) {
+        const modelProperties = Object.keys(model.schema.paths);
+
+        const orArray = modelProperties
+          .filter((property) => {
+            const propertyType = model.schema.paths[property]?.instance;
+            return propertyType === 'String';
+          })
+          .map((property) => {
+            const regexFilter = { [property]: { $regex: new RegExp(searchQuery, 'i') } };
+            return regexFilter;
+          });
+
+        // Add the $or array to the search filter
+        searchFilter.$or = orArray;
+      }
+
+      // Combine search and filter queries
+      const query = { ...filter, ...searchFilter };
+
+      let itemsQuery: Query<T[], T, {}>;
+
+      // Populate specified attributes
+      if (population) {
+        itemsQuery = model.find(query).populate(population) as Query<T[], T, {}>;
+      } else {
+        itemsQuery = model.find(query) as Query<T[], T, {}>;
+      }
+
+      // Fetch total count without pagination
+      const totalCount = await model.countDocuments(query);
+
+      const items = await itemsQuery
         .skip(skip)
         .limit(pageSize);
 
-      res.status(200).json({ [`${model.modelName.toLowerCase()}s`]: items });
+      res.status(200).json({ [`${model.modelName.toLowerCase()}s`]: items, total: totalCount });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Internal Server Error' });

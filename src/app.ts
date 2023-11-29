@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from './db';
 import cors from 'cors';
 import fs from 'fs';
+import http from 'http';
 import https from "https"
 import { Server } from 'socket.io';
 
@@ -30,12 +31,15 @@ const ca = fs.readFileSync('ca_bundle.crt', 'utf8');
 const credentials = { key: privateKey, cert: certificate, ca: ca };
 
 // Create an HTTPS server
-const httpsServer = https.createServer(credentials, app);
+// const httpsServer = https.createServer(credentials, app);
+
+// Create an HTTPS server
+const httpsServer = http.createServer(app);
 
 // Initialize Socket.IO
-const io = new Server(httpsServer, {
+export const io = new Server(httpsServer, {
   cors: {
-    origin: '*',  // Replace with your frontend URL
+    origin: '*', 
   },
 });
 
