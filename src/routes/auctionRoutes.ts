@@ -27,7 +27,7 @@ router.post('/create', [upload], createAuction);
 // router.get('/:id/details', getFullAuctionDetailsById);
 
 // Get a specific auction by ID
-// router.get('/:id', getAuctionById);
+router.get('/:id', getAuctionById);
 
 // Update a specific auction by ID
 // router.put('/:id', updateAuctionById);

@@ -1,23 +1,31 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+interface IUser {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+}
+
 export interface IAuction extends Document {
-  winner_id: mongoose.Types.ObjectId | null; // Assuming winner_id is a reference to user_id
+  winner_id: mongoose.Types.ObjectId | null;
+  winner_name: string | null; // Added winner_name attribute
   winner_bid_amount: number;
   title: string;
   description: string;
-  image: string; // You might want to use a specific data type for images, like Buffer or a URL
+  image: string;
   start_datetime: Date;
-  duration: number; 
+  duration: number;
   durationHours: number;
   durationMinutes: number;
   opening_bid_amount: number;
-  logs: Record<string, any>[]; // JSON structure for logs
-  raise_options: Record<string, any>; // JSON structure for raise_options
-  status: 'Not Started' | 'In Progress' | 'Ended'; // Added status attribute
+  logs: Record<string, any>[];
+  raise_options: Record<string, any>;
+  status: 'Not Started' | 'In Progress' | 'Ended';
+  users: IUser[];
 }
 
 const AuctionSchema: Schema = new Schema({
   winner_id: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+  winner_name: { type: String, default: null }, // Added winner_name attribute
   winner_bid_amount: { type: Number, default: 0 },
   title: { type: String, required: true },
   description: { type: String, required: true },
@@ -30,6 +38,7 @@ const AuctionSchema: Schema = new Schema({
   logs: { type: [Object], default: [] },
   raise_options: { type: Object, default: {} },
   status: { type: String, enum: ['Not Started', 'In Progress', 'Ended'], default: 'Not Started' },
+  users: [{ _id: { type: Schema.Types.ObjectId, ref: 'User' }, name: String }],
 });
 
 const AuctionModel = mongoose.model<IAuction>('Auction', AuctionSchema);

@@ -15,7 +15,7 @@ export const signUp = async (req: Request, res: Response) => {
       username,
       password: hashedPassword,
       name,
-      mobile_no,
+      mobile_no: 7666674367,
       email_id,
     });
 

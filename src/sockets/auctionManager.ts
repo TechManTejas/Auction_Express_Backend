@@ -3,7 +3,8 @@ import AuctionModel, { IAuction } from '../models/Auction';
 import { startAuctionTimer } from './auctionSocket';
 
 // Define a dictionary to store auction information
-const auctionsData: Record<string, IAuction> = {};
+const auctionsData: Record<string, IAuction> = {}
+
 
 // Example function to check and move auctions to auctionsData when they start
 const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
@@ -31,7 +32,7 @@ const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
 
                 // If it's a new auction, start the timer
                 startAuctionTimer(io, auctionId, auction.start_datetime, auction.duration);
-                
+
 
             } catch (error: any) {
                 console.error('Error converting to Mongoose document:', error.message);

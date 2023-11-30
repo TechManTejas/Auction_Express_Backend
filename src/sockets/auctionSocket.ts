@@ -26,8 +26,11 @@ const auctionSockets = (io: Server) => {
         console.log(`User connected: ${socket.id}`);
 
         // Handle joining an auction room
-        socket.on('joinAuction', (auctionId) => {
+        socket.on('joinAuction', (data) => {
             try {
+                const { auctionId, bidder_id, bidder_name } = data;
+                console.log({ auctionId, bidder_id, bidder_name })
+
                 // Check if the auction is active and not ended yet
                 const auction = auctionsData[auctionId];
                 if (!auction || auction.status !== 'In Progress') {
@@ -37,13 +40,22 @@ const auctionSockets = (io: Server) => {
                 // Join the room specific to the auction
                 socket.join(auctionId);
 
+                // Add the user's information to the auctionData for that auction
+                if (!auction.users.find(u => u._id === bidder_id)) {
+                    auction.users.push({
+                        _id: bidder_id,
+                        name: bidder_name,
+                        // Add other user-related fields as needed
+                    });
+                }
+
                 // Send the initial information about the auction to the user
                 socket.emit('initialAuctionInfo', {
                     auctionId,
                     title: auction.title,
                     description: auction.description,
                     openingBidAmount: auction.opening_bid_amount,
-                    winner: auction.winner_id,
+                    winnerName: auction ? auction.winner_name : 'Unknown Bidder', 
                     winnerBidAmount: auction.winner_bid_amount,
                     // Add other relevant auction information as needed
                 });
@@ -70,19 +82,28 @@ const auctionSockets = (io: Server) => {
 
                 if (now < auctionEndTime) {
                     // Find the raise option amount based on the provided raiseOptionId
-                    const raiseOption = auction.raise_options[raiseOptionId];
+                    const raiseAmount = parseInt(JSON.parse(auction.raise_options.toString())[raiseOptionId])
 
+                    console.log(`Raise option`, raiseAmount);
                     // Check if the raise option exists
-                    if (raiseOption) {
+                    if (raiseAmount) {
                         // Calculate the total bid amount by adding the raise option amount to the current winner_bid amount
-                        const totalBidAmount = auction.winner_bid_amount + raiseOption.amount;
+                        const totalBidAmount = auction.winner_bid_amount + raiseAmount;
+
+                        // Find the bidder's information based on their ID
+                        const bidder = auction.users.find(user => user._id === bidderId);
 
                         // Update winner information in auctionsData
                         auction.winner_id = bidderId;
                         auction.winner_bid_amount = totalBidAmount;
+                        auction.winner_name = bidder ? bidder.name : 'Unknown Bidder', 
 
                         // Broadcast the updated bid information to other users in the auction room
-                        io.to(auctionId).emit('updateBids', { auctionId, winnerId: bidderId, winnerBidAmount: totalBidAmount });
+                        io.to(auctionId).emit('updateBids', {
+                            auctionId,
+                            winnerName: bidder ? bidder.name : 'Unknown Bidder', // Send the bidder's name to the frontend
+                            winnerBidAmount: totalBidAmount,
+                        });
 
                         // Additional logic if needed when a bid is successfully placed
                         console.log(`Bid placed by ${bidderId} in auction ${auctionId} with a total bid amount of ${totalBidAmount}.`);
@@ -98,6 +119,7 @@ const auctionSockets = (io: Server) => {
                 console.error('Error placing bid:', error.message);
             }
         });
+
 
         socket.on('disconnect', () => {
             console.log(`User disconnected: ${socket.id}`);
