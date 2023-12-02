@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import moment from 'moment-timezone';
 import mongoose from './db';
 import cors from 'cors';
 import fs from 'fs';
@@ -12,6 +13,10 @@ import auctionRoutes from './routes/auctionRoutes';
 import auctionSockets from './sockets/auctionSocket';
 
 const app = express();
+
+// Set the default time zone for your server
+const serverTimeZone = 'Asia/Kolkata'; // Change this to your desired time zone
+moment.tz.setDefault(serverTimeZone);
 
 // Use the cors middleware to enable CORS and allow all origins
 app.use(cors({
@@ -31,10 +36,10 @@ const ca = fs.readFileSync('ca_bundle.crt', 'utf8');
 const credentials = { key: privateKey, cert: certificate, ca: ca };
 
 // Create an HTTPS server
-const httpsServer = https.createServer(credentials, app);
+// const httpsServer = https.createServer(credentials, app);
 
 // Create an HTTPS server
-// const httpsServer = http.createServer(app);
+const httpsServer = http.createServer(app);
 
 // Initialize Socket.IO
 export const io = new Server(httpsServer, {
