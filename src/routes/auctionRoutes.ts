@@ -30,7 +30,7 @@ router.post('/create', [upload], createAuction);
 router.get('/:id', getAuctionById);
 
 // Update a specific auction by ID
-// router.put('/:id', updateAuctionById);
+router.put('/:id', [upload], updateAuctionById);
 
 // Delete a specific auction by ID
 // router.delete('/:id', deleteAuctionById);

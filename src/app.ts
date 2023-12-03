@@ -9,6 +9,7 @@ import https from "https"
 import { Server } from 'socket.io';
 
 import userRoutes from './routes/userRoutes';
+import staffRoutes from './routes/staffRoutes';
 import auctionRoutes from './routes/auctionRoutes';
 import auctionSockets from './sockets/auctionSocket';
 
@@ -52,6 +53,7 @@ export const io = new Server(httpsServer, {
 auctionSockets(io);
 
 app.use('/users', userRoutes);
+app.use('/admins', staffRoutes);
 app.use('/auctions', auctionRoutes);
 
 app.get('/.well-known/pki-validation/44ACDDD30968E49728910DA7A6DDB8AD.txt', (req, res) => {
