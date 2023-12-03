@@ -13,6 +13,8 @@ const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
     now.setHours(now.getHours() + 5);
     now.setMinutes(now.getMinutes() + 30);
 
+    console.log(now)
+
     for (const auctionId in allAuctions) {
         const auction = allAuctions[auctionId];
 
