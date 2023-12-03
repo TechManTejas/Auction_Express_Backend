@@ -54,6 +54,9 @@ const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
 // Function to check and update the status of ended auctions
 const checkAndEndAuctions = async () => {
     const now = new Date();
+    // Add 5 hours and 30 minutes
+    now.setHours(now.getHours() + 5);
+    now.setMinutes(now.getMinutes() + 30);
 
     for (const auctionId in auctionsData) {
         const auction = auctionsData[auctionId];
