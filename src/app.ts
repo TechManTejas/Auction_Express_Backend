@@ -61,6 +61,11 @@ app.use('/auctions', auctionRoutes);
 app.use('/tenders', tenderRoutes);
 app.use('/tenderform', tenderformRoutes);
 
+// Add this line to your Express app
+app.use('/uploads/tenders', express.static('uploads/tenders'));
+app.use('/uploads/auctions', express.static('uploads/auctions'));
+
+
 app.get('/.well-known/pki-validation/44ACDDD30968E49728910DA7A6DDB8AD.txt', (req, res) => {
   // Assuming your text file is named 'example.txt' in the root directory
   const filePath = '44ACDDD30968E49728910DA7A6DDB8AD.txt';

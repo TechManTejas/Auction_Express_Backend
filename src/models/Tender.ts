@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-interface TenderModel extends Document {
+export interface TenderModel extends Document {
   title: string;
   description: string;
   estCost: number;

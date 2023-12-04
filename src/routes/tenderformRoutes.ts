@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
-import path from 'path'; // Import the 'path' module
 import TenderForm, { TenderFormModel } from '../models/TenderForm';
 import { generateCRUDRoutes } from '../utils/simplecrud.controller';
 
@@ -10,7 +9,7 @@ const router = express.Router();
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/tenderfiles'); // Specify the destination directory
+    cb(null, 'uploads/tenders'); // Specify the destination directory
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname); // Use the original filename
@@ -45,8 +44,8 @@ router.post('/create', upload.fields([
     const itReturnOrBankStatementFile = files['itReturnOrBankStatement'][0];
 
     // Assuming you have stored the files and obtained their URLs
-    const incomeProofUrl = `/uploads/${incomeProofFile.originalname}`;
-    const itReturnOrBankStatementUrl = `/uploads/${itReturnOrBankStatementFile.originalname}`;
+    const incomeProofUrl = `/uploads/tenders/${incomeProofFile.originalname}`;
+    const itReturnOrBankStatementUrl = `/uploads/tenders/${itReturnOrBankStatementFile.originalname}`;
 
     const newTenderForm: TenderFormModel = new TenderForm({
       companyName,
