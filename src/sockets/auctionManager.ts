@@ -42,7 +42,7 @@ const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
 
                 // If it's a new auction, start the timer
                 startAuctionTimer(io, auctionId, auction.start_datetime, auction.duration 
-                    // - (1.98e+7)
+                    - (1.98e+7)
                 );
 
 
@@ -115,7 +115,7 @@ const checkAuctionsInterval = setInterval(async () => {
     const allAuctions = await getNotStartedAuctions();
     checkAndMoveAuctions(allAuctions);
     checkAndEndAuctions();
-}, 60000 / 20); // 60000 milliseconds = 1 minute
+}, 60000 / 3); // 60000 milliseconds = 1 minute
 
 // Uncomment the line below if you want to stop the interval when needed (e.g., when the server is shutting down)
 // clearInterval(checkAuctionsInterval);
