@@ -41,7 +41,9 @@ const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
                 console.log(`Auction ${auctionId} has started.`);
 
                 // If it's a new auction, start the timer
-                startAuctionTimer(io, auctionId, auction.start_datetime, auction.duration - (1.98e+7));
+                startAuctionTimer(io, auctionId, auction.start_datetime, auction.duration 
+                    // - (1.98e+7)
+                );
 
 
             } catch (error: any) {

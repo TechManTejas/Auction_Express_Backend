@@ -11,6 +11,9 @@ import { Server } from 'socket.io';
 import userRoutes from './routes/userRoutes';
 import staffRoutes from './routes/staffRoutes';
 import auctionRoutes from './routes/auctionRoutes';
+import tenderRoutes from './routes/tenderRoutes';
+import tenderformRoutes from './routes/tenderformRoutes';
+
 import auctionSockets from './sockets/auctionSocket';
 
 const app = express();
@@ -37,10 +40,10 @@ const ca = fs.readFileSync('ca_bundle.crt', 'utf8');
 const credentials = { key: privateKey, cert: certificate, ca: ca };
 
 // Create an HTTPS server
-const httpsServer = https.createServer(credentials, app);
+// const httpsServer = https.createServer(credentials, app);
 
 // Create an HTTPS server
-// const httpsServer = http.createServer(app);
+const httpsServer = http.createServer(app);
 
 // Initialize Socket.IO
 export const io = new Server(httpsServer, {
@@ -50,11 +53,13 @@ export const io = new Server(httpsServer, {
 });
 
 // Initialize Socket.IO logic for auctions
-auctionSockets(io);
+// auctionSockets(io);
 
 app.use('/users', userRoutes);
 app.use('/admins', staffRoutes);
 app.use('/auctions', auctionRoutes);
+app.use('/tenders', tenderRoutes);
+app.use('/tenderform', tenderformRoutes);
 
 app.get('/.well-known/pki-validation/44ACDDD30968E49728910DA7A6DDB8AD.txt', (req, res) => {
   // Assuming your text file is named 'example.txt' in the root directory
