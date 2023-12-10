@@ -41,10 +41,10 @@ const ca = fs.readFileSync('ca_bundle.crt', 'utf8');
 const credentials = { key: privateKey, cert: certificate, ca: ca };
 
 // Create an HTTPS server
-// const httpsServer = https.createServer(credentials, app);
+const httpsServer = https.createServer(credentials, app);
 
 // Create an HTTPS server
-const httpsServer = http.createServer(app);
+// const httpsServer = http.createServer(app);
 
 // Initialize Socket.IO
 export const io = new Server(httpsServer, {
