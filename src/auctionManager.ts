@@ -1,6 +1,6 @@
-import { io } from '../app';
-import AuctionModel, { IAuction } from '../models/Auction';
-import { startAuctionTimer } from './auctionSocket';
+import { io } from './app';
+import AuctionModel, { IAuction } from './models/Auction';
+import { startAuctionTimer } from './sockets/auctionSocket';
 
 // Define a dictionary to store auction information
 const auctionsData: Record<string, IAuction> = {}

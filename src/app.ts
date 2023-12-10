@@ -15,6 +15,7 @@ import tenderRoutes from './routes/tenderRoutes';
 import tenderformRoutes from './routes/tenderformRoutes';
 
 import auctionSockets from './sockets/auctionSocket';
+import checkAndEndTenders from './tenderManager';
 
 const app = express();
 
@@ -40,10 +41,10 @@ const ca = fs.readFileSync('ca_bundle.crt', 'utf8');
 const credentials = { key: privateKey, cert: certificate, ca: ca };
 
 // Create an HTTPS server
-const httpsServer = https.createServer(credentials, app);
+// const httpsServer = https.createServer(credentials, app);
 
 // Create an HTTPS server
-// const httpsServer = http.createServer(app);
+const httpsServer = http.createServer(app);
 
 // Initialize Socket.IO
 export const io = new Server(httpsServer, {
@@ -54,6 +55,13 @@ export const io = new Server(httpsServer, {
 
 // Initialize Socket.IO logic for auctions
 auctionSockets(io);
+// Set the interval to check and end tenders every 1 minute (adjust as needed)
+const checkTendersInterval = setInterval(async () => {
+  checkAndEndTenders();
+}, 60000); // 60000 milliseconds = 1 minute
+
+// Uncomment the line below if you want to stop the interval when needed (e.g., when the server is shutting down)
+// clearInterval(checkTendersInterval);
 
 app.use('/users', userRoutes);
 app.use('/admins', staffRoutes);

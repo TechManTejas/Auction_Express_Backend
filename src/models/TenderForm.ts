@@ -39,10 +39,6 @@ const tenderFormSchema: Schema<TenderFormModel> = new mongoose.Schema({
     type: String,
     required: true,
   },
-  itReturnOrBankStatement: {
-    type: String,
-    required: true,
-  },
   projectDetails1: {
     type: String,
     required: true,

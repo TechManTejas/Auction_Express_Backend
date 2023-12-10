@@ -41,11 +41,9 @@ router.post('/create', upload.fields([
 
     // Access files using the specified field names
     const incomeProofFile = files['incomeProof'][0];
-    const itReturnOrBankStatementFile = files['itReturnOrBankStatement'][0];
 
     // Assuming you have stored the files and obtained their URLs
     const incomeProofUrl = `/uploads/tenders/${incomeProofFile.originalname}`;
-    const itReturnOrBankStatementUrl = `/uploads/tenders/${itReturnOrBankStatementFile.originalname}`;
 
     const newTenderForm: TenderFormModel = new TenderForm({
       companyName,
@@ -54,7 +52,6 @@ router.post('/create', upload.fields([
       panNumber,
       gstNumber,
       incomeProof: incomeProofUrl,
-      itReturnOrBankStatement: itReturnOrBankStatementUrl,
       projectDetails1,
       projectDetails2,
       projectDetails3,

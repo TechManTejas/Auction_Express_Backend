@@ -11,10 +11,11 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
   console.log('Connected to MongoDB');
 
-  const username = 'SUPERUSER';
-  const password = 'SUPERUSER';
+  const username = 'SUPERADMIN';
+  const password = 'SUPERADMIN';
+  const role = 'SUPERADMIN'
 
-  createStaffUserIfNotExists(username, password)
+  createStaffUserIfNotExists(username, password, role)
     .then((createdUser) => {
       console.log('User created or already exists:', createdUser);
     })

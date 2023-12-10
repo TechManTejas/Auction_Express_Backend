@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import auctionsData from './auctionManager';
+import auctionsData from '../auctionManager';
 
 export function startAuctionTimer(io: Server, auctionId: string, startDatetime: Date, duration: number) {
     // Calculate the auction end time
