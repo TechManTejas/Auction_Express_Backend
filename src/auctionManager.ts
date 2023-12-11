@@ -10,8 +10,8 @@ const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
 
     const now = new Date()
     // Add 5 hours and 30 minutes
-    now.setHours(now.getHours() + 5);
-    now.setMinutes(now.getMinutes() + 30);
+    // now.setHours(now.getHours() + 5);
+    // now.setMinutes(now.getMinutes() + 30);
 
     console.log(now)
 
@@ -42,7 +42,7 @@ const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
 
                 // If it's a new auction, start the timer
                 startAuctionTimer(io, auctionId, auction.start_datetime, auction.duration 
-                    - (1.98e+7)
+                    // - (1.98e+7)
                 );
 
 
@@ -57,8 +57,8 @@ const checkAndMoveAuctions = async (allAuctions: Record<string, IAuction>) => {
 const checkAndEndAuctions = async () => {
     const now = new Date();
     // Add 5 hours and 30 minutes
-    now.setHours(now.getHours() + 5);
-    now.setMinutes(now.getMinutes() + 30);
+    // now.setHours(now.getHours() + 5);
+    // now.setMinutes(now.getMinutes() + 30);
 
     for (const auctionId in auctionsData) {
         const auction = auctionsData[auctionId];

@@ -39,6 +39,7 @@ router.post('/create', upload.fields([
       durationHours,
       durationMinutes,
       opening_bid_amount,
+      raise_options
     } = req.body;
 
     console.log(
@@ -71,6 +72,7 @@ router.post('/create', upload.fields([
       durationHours,
       durationMinutes,
       opening_bid_amount,
+      raise_options
     });
 
     const savedAuction = await newAuction.save();
