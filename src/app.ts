@@ -74,9 +74,9 @@ app.use('/uploads/tenders', express.static('uploads/tenders'));
 app.use('/uploads/auctions', express.static('uploads/auctions'));
 
 
-app.get('/.well-known/pki-validation/44ACDDD30968E49728910DA7A6DDB8AD.txt', (req, res) => {
+app.get('/.well-known/pki-validation/6566385EBFC25D593C80FB35FB505F65.txt', (req, res) => {
   // Assuming your text file is named 'example.txt' in the root directory
-  const filePath = '44ACDDD30968E49728910DA7A6DDB8AD.txt';
+  const filePath = '6566385EBFC25D593C80FB35FB505F65.txt';
 
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
