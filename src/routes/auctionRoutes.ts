@@ -104,7 +104,7 @@ router.put('/:id/update', upload.fields([
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
     // Access files using the specified field names
-    const image = files['image'][0];
+    const image = files['image'] ? files['image'][0] : undefined;
 
     // Access the uploaded image using the specified field name
     const imageUrl = image ? `/uploads/auctions/${image.originalname}` : undefined;
